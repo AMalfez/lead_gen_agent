@@ -2,8 +2,9 @@ from langchain.agents import create_agent
 from model import model
 from tools.find_email import find_email
 from tools.verify_email import verify_email
+from tools.discover import discover_companies, discover_people
 from pydantic import BaseModel, Field
-from typing import Union
+from typing import Union, Literal
 from langchain.agents.structured_output import ToolStrategy
 
 prompt = """
@@ -11,7 +12,21 @@ You are an AI agent that helps users find and verify email addresses.
 You have access to the following tools:
 1. find_email: Find the email address of a person given their domain, first name, and last name.
 2. verify_email: Verify the validity of an email address.
-Use these tools to assist users in finding and verifying email addresses as needed.
+3. discover_companies: Discover potential target companies based on a description from the query.
+4. discover_people: Discover potential people working at a company based on the domain.
+Use these tools to assist users in finding and verifying email addresses as well as discovering target companies and people to reach out to in a particular company.
+You must ALWAYS answer using the AgentResponse JSON structure.
+
+The "type" field determines what you are returning:
+- "email" → fill the email field
+- "verification" → fill status
+- "companies" → fill companies[]
+- "people" → fill people[]
+- "general" → fill response (use this when you encounter error or returning a general message or follow up question)
+
+NEVER output plain text. NEVER output partial JSON. NEVER output fields that do not belong to AgentResponse.
+
+
 
 NOTE:
 verify_email tool returns the status of the email address. It takes 1 out of 6 possible values:
@@ -25,23 +40,29 @@ verify_email tool returns the status of the email address. It takes 1 out of 6 p
 
 """
 
-class Email(BaseModel):
-    """ Use this strucure if you are returning an email address """
-    email: str|None = Field(description="The email address of the person.")
-
-class isVerified(BaseModel):
-    """ Use this strucure if you are returning the verification status of an email address """
-    status: str|None = Field(description="The verification status of the provided email address.")
+class AgentResponse(BaseModel):
+    type: Literal[
+        "email",
+        "verification",
+        "companies",
+        "people",
+        "general"
+    ]
+    email: str | None = None
+    status: str | None = None
+    companies: list[str] | None = None
+    people: list[str] | None = None
+    response: str | None = None
 
 agent = create_agent(
     model,
-    tools = [find_email, verify_email],
+    tools = [find_email, verify_email, discover_companies, discover_people],
     system_prompt=prompt,
-    response_format=ToolStrategy(Union[Email, isVerified]),
+    response_format=ToolStrategy(AgentResponse),
 )
 
 if __name__ == "__main__":
-    # query = "Find me the email of alfez mansuri who works in Turing."
-    query = "Verify the email: richard@piedpiper.com."
+    # query = "Find me tech companies having less than 100 employees in US."
+    query = "Find me leads in Bluehost."
     res = agent.invoke({"messages":[{"role":"user","content":query}]})
     print(res['structured_response'])

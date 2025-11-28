@@ -10,6 +10,9 @@ def verify_email(email: str) -> str:
     Returns:
         str: The verification result of the email address.
     """
+
+    if not email:
+        return "Error: email is a required parameter."
     
     try:
         url = f"https://api.hunter.io/v2/email-verifier?email={email}&api_key=test-api-key"

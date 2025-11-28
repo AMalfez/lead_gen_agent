@@ -1,4 +1,4 @@
 langchain
-langchain-google-genai
 python-dotenv
 requests
+langchain-groq
