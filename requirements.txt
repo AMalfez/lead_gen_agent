@@ -2,3 +2,5 @@ langchain
 python-dotenv
 requests
 langchain-groq
+langsmith
+langgraph-cli[inmem]
