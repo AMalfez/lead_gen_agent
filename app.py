@@ -8,7 +8,7 @@ origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
     "http://localhost",
-    "http://localhost:8080",
+    "http://localhost:5174",
 ]
 
 app.add_middleware(
@@ -36,4 +36,17 @@ async def run_agent(request: AgenticRequest):
     from agent import agent
     q = request.query
     response = agent.invoke({"messages":[{"role":"user","content":q}]})
-    return response['structured_response']
+    sres = response['structured_response']
+    match sres.type:
+        case "email":
+            return {"response": sres.email}
+        case "verification":
+            return {"response": sres.status}
+        case "companies":
+            return {"response": sres.companies}
+        case "people":
+            return {"response": sres.people}
+        case "general":
+            return {"response": sres.response}
+        case _:
+            return {"response": "Unknown response type"}
