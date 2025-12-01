@@ -51,7 +51,7 @@ class AgentResponse(BaseModel):
     email: str | None = None
     status: str | None = None
     companies: list[str] | None = None
-    people: list[str] | None = None
+    people: list[dict] | None = None
     response: str | None = None
 
 agent = create_agent(

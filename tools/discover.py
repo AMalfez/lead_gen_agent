@@ -41,7 +41,7 @@ def discover_people(domain: str) -> list:
     Args:
         domain (str): The domain of the company.
     Returns:
-        list: A list of 100 relevant people with details.
+        list: A list of all relevant people with details.
     """
 
     if not domain:
@@ -55,7 +55,7 @@ def discover_people(domain: str) -> list:
             data = response.json()
             res = []
             for person in data['data']['emails']:
-                res.append(f"{person["value"]} - {person["first_name"]} {person["last_name"]} - {person["position"]}")
+                res.append({"email":person["value"], "first_name":person["first_name"], "last_name":person["last_name"], "position":person["position"]})
             return res
         else:
             return f"Error: {response.status_code} - {response.text}"
