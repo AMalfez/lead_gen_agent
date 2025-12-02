@@ -29,10 +29,9 @@ async def health():
 
 @app.post("/agent")
 async def run_agent(request: AgenticRequest):
-    from agent import agent
+    from agent import invoke_agent
     q = request.query
-    response = agent.invoke({"messages":[{"role":"user","content":q}]})
-    sres = response['structured_response']
+    sres = invoke_agent(q)
     match sres.type:
         case "email":
             return {"response": sres.email}

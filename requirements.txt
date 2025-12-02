@@ -5,3 +5,4 @@ langchain-groq
 langsmith
 langgraph-cli[inmem]
 fastapi[standard]
+langgraph-checkpoint-postgres
