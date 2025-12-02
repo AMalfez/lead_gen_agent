@@ -1,15 +1,11 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI()
 
-origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:5174",
-]
+origins = os.getenv('FRONTEND_URL') or ["http://localhost:5174","http://localhost:5173",]
 
 app.add_middleware(
     CORSMiddleware,
