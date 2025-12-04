@@ -60,29 +60,15 @@ You are an AI agent that helps users find and connect to leads.
     "unknown": we failed to verify the email address.
 """
 
-if ENV == "dev":
-    from langgraph.checkpoint.memory import InMemorySaver
-    agent = create_agent(
-        model,
-        tools = tools,
-        middleware=[trim_messages],
-        system_prompt=prompt,
-        response_format=ToolStrategy(AgentResponse),
-        checkpointer=InMemorySaver()
-    )
-else:
-    from langgraph.checkpoint.postgres import PostgresSaver  
-    DB_URI = "postgresql://postgres:postgres@localhost:5442/postgres?sslmode=disable"
-    with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
-        checkpointer.setup() # auto create tables in PostgresSql
-        agent = create_agent(
-            model,
-            tools=tools,
-            checkpointer=checkpointer, 
-            system_prompt=prompt,
-            response_format=ToolStrategy(AgentResponse),
-            middleware=[trim_messages],
-        )
+from langgraph.checkpoint.memory import InMemorySaver
+agent = create_agent(
+    model,
+    tools = tools,
+    middleware=[trim_messages],
+    system_prompt=prompt,
+    response_format=ToolStrategy(AgentResponse),
+    checkpointer=InMemorySaver()
+)
 
 def invoke_agent(query:str):
     res = agent.invoke({"messages":[{"role":"user","content":query}]},config)
