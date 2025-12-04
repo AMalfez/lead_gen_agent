@@ -15,6 +15,11 @@ This project provides:
 -   LangGraph + LangSmith workflow tracing\
 -   React frontend ready to plug in
 
+
+## Architecture
+<img width="1024" height="1536" alt="ChatGPT Image Dec 4, 2025, 11_43_07 AM" src="https://github.com/user-attachments/assets/7cdde145-c972-49f9-9ef4-7ad2cae230da" />
+
+
 ## ✨ Features
 
 ### 🔍 Discover Companies
